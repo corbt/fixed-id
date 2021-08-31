@@ -66,21 +66,26 @@ There are many types of attestations that are conceptually tied to an individual
 
 All FixedID users will receive a basic income through a new token "Fixed Income" (FIN). There are three primary reasons to bake this into the protocol:
 
-- 1. The issuance schedule described below will naturally reward early adopters heavily. This should drive initial adoption.
-- 2. Controlling the issuance of FIN gives the protocol a way to punish users who try to subvert the protocol without actually removing their account (which we never want to do for legitimate people). FIN issuance can be locked or suspended for a time in response to eg. vouching for a fraudulent user.
-- 3. It is my opinion that some amount of redistribution is fair, to partially counteract the vastly different circumstances individual humans are born into.
-     FIN will be issued at an initial rate of 100,000,000 tokens per year. This issuance rate will increase by 2.34% annually, leading to an overall long-term inflation rate of 2.28%. This inflation rate was chosen to (in the long term) double the total money supply every 30 years. The 30-year-doubling is somewhat arbitrary, but I chose it since that's the approximate length of one generation and this way each new generation gets something of a fresh start.
-     The FIN token will be released with no "pre-mine." The only way FIN is minted is through the standard issuance to FixedIDs.
-     Within each distribution period (tentatively once an hour), the total amount of FIN to be issued in that period will be calculated, and then distributed evenly among all active FixedID holders. This distribution scheme should incentivize early adopters to sign up, since **in the early days before the network becomes widely used the FIN tokens allotted to each user will be huge**.
-     The issuance dynamic is captured by the equations below:
-  - $$YearOneIssuance = 100,000,000$$
-  - $$IssuanceInflation = \sqrt[30]{2} \approx 1.02337389...$$
-  - $$annualIssuance(T) = YearOneIssuance * IssuanceInflation^{T}$$
-  - $$
-          AnnualInflation = \lim_{T \to \infty} \left ( \frac{annualIssuance(T)}{\sum_{n=0}^{T-1}annualIssuance(n)} \right ) \approx 0.0228...
-    $$
-  - $$annualIncome(T) = \frac{annualIssuance(T)}{count(ActiveFixedIDs)}$$
+1. The issuance schedule described below will naturally reward early adopters heavily. This should drive initial adoption.
+2. Controlling the issuance of FIN gives the protocol a way to punish users who try to subvert the protocol without actually removing their account (which we never want to do for legitimate people). FIN issuance can be locked or suspended for a time in response to eg. vouching for a fraudulent user.
+3. It is my opinion that some amount of redistribution is fair, to partially counteract the vastly different circumstances individual humans are born into.
+
+FIN will be issued at an initial rate of 100,000,000 tokens per year. This issuance rate will increase by 2.34% annually, leading to an overall long-term inflation rate of 2.28%. This inflation rate was chosen to (in the long term) double the total money supply every 30 years. The 30-year-doubling is somewhat arbitrary, but I chose it since that's the approximate length of one generation and this way each new generation gets something of a fresh start.
+
+The FIN token will be released with no "pre-mine." The only way FIN is minted is through the standard issuance to FixedIDs.
+
+Within each distribution period (tentatively once an hour), the total amount of FIN to be issued in that period will be calculated, and then distributed evenly among all active FixedID holders. This distribution scheme should incentivize early adopters to sign up, since **in the early days before the network becomes widely used the number of FIN tokens allotted to each user will be huge**.
+
+The issuance dynamic is captured by the equations below:
+
+- $$YearOneIssuance = 100,000,000$$
+- $$IssuanceInflation = \sqrt[30]{2} \approx 1.02337389...$$
+- $$annualIssuance(T) = YearOneIssuance * IssuanceInflation^{T}$$
+- $$
+        AnnualInflation = \lim_{T \to \infty} \left ( \frac{annualIssuance(T)}{\sum_{n=0}^{T-1}annualIssuance(n)} \right ) \approx 0.0228...
+  $$
+- $$annualIncome(T) = \frac{annualIssuance(T)}{count(ActiveFixedIDs)}$$
 
 ## Lots left to do!
 
-As you can see, there's a huge scope of work here. I'd love feedback on the protocol. And separately, if you're interested in building a system that may one day be used to authenticate most of the planet, I'd love to hear from you! There's plenty to do here and I'm looking for someone to tackle this with me. 🙂
+As you can see, there's a huge scope of work here. I'd love feedback on the protocol. And separately, if you're interested in building a system that may one day be used to authenticate most of the planet, I'd love to hear from you! There's plenty to do and I'm looking for someone to tackle this with me. 🙂
