@@ -14,7 +14,7 @@ struct User {
     // The name the user chose when signing up.
     string name;
     // The amount of collateral added to the account, in wei.
-    uint256 collateral;
+    uint256 bond;
     // The date the user was added to the database.
     uint32 createdAt;
     // The last time the user redeemed their FIN tokens.
@@ -26,7 +26,7 @@ struct User {
 /* Contains the base data structures and functions used by other parts of the FixedID contract. */
 contract Base is Ownable {
     // The minimum account collateral required. 0.01ETH by default.
-    uint256 public minCollateral = 0.01 ether;
+    uint256 public minBond = 0.01 ether;
 
     /* Begin code related to issuing FixedIDs */
 
@@ -47,7 +47,7 @@ contract Base is Ownable {
         string calldata photo,
         string calldata name
     ) external payable {
-        require(msg.value >= minCollateral);
+        require(msg.value >= minBond);
         lastIssuedId++;
         fixedIds[lastIssuedId] = User(
             msg.sender,
