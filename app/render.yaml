@@ -8,7 +8,7 @@ services:
 - name: app-web
   type: web
   env: static
-  buildCommand: blah blah
+  buildCommand: cd app && yarn rw deploy render web
   staticPublishPath: ./app/web/dist
   envVars:
   - key: NODE_VERSION
