@@ -55,18 +55,20 @@ export default function FAQs() {
               >
                 proof of personhood
               </Link>
-              ." Apps that have a high risk of fraud from sybil attacks like
-              sockpuppeting or selfish voting may choose to require their users
-              to sign up with a FixedID.
+              ." Apps that have a high risk of fraud from{' '}
+              <Link to="https://en.wikipedia.org/wiki/Sybil_attack" isExternal>
+                sybil attacks
+              </Link>{' '}
+              like sockpuppeting or fake reviews may choose to require their
+              users to sign up with a FixedID.
             </Text>
             <Text>
               Long term, we expect many apps to natively support FixedID-based
-              sign-in. Besides protecting against attacks by only allowing one
-              account per user, FixedID sign-in is more private than centralized
-              SSO providers like Google and Facebook. It's also more ergonomic
-              than signing in with an Ethereum wallet directly, since FixedID
-              builds in social recovery so you won't get locked out if you lose
-              your private key.
+              sign-in. Besides ensuring each user has only one account, FixedID
+              sign-in is more private than centralized SSO providers like Google
+              and Facebook. It's also more ergonomic than signing in with an
+              Ethereum wallet directly, since FixedID has built-in in social
+              recovery so you won't get locked out if you lose your private key.
             </Text>
           </Box>
           <Box>
@@ -91,12 +93,12 @@ export default function FAQs() {
             </Heading>
             <Text>
               Bitcoin itself is a powerful example of the way shared ideas can
-              conjure up value "out of thin air," even without government
-              backing. A currency issued through basic income could potentially
-              be seen as more legitimate than Bitcoin itself, and eventually
-              accrue more value. This is because if properly implemented it
-              solves the critical social problem of both initial and ongoing
-              distribution that Bitcoin is silent on.
+              conjure up value out of thin air, even without government backing.
+              A currency issued through basic income could potentially be seen
+              as more legitimate than Bitcoin itself, and eventually accrue more
+              value. This is because if properly implemented it solves the
+              critical social problem of fair distribution that Bitcoin is
+              silent on.
             </Text>
             <Text>
               The FixedCoin issuance rate grows slowly by a set formula intended
@@ -120,11 +122,10 @@ export default function FAQs() {
             </Heading>
             <Text>
               Yes! The issuance rate of FixedCoin doesn't depend on the number
-              of users in the system, so the more people sign up, the fewer
-              coins will be available each period to distribute to each
-              individual. Early adopters will get rewarded with larger
-              allocations of FixedCoin in the early days before more users sign
-              up.
+              of users in the system, so as more people sign up, each person
+              will get fewer coins in each period. Early adopters will get
+              rewarded with larger allocations of FixedCoin in the early days
+              before more users sign up.
             </Text>
             <Text>
               Also, the FixedID contract issues ID numbers sequentially,
@@ -137,7 +138,7 @@ export default function FAQs() {
               Ok, how do I sign up?
             </Heading>
             <Text>
-              Right now, we're in a closed beta while we finish preparing the
+              Right now, we're in a closed beta while we finish building the
               tech. You can see our progress and even contribute{' '}
               <Link href="https://github.com/corbt/fixed-id" isExternal>
                 here

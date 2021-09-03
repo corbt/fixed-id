@@ -40,9 +40,9 @@ export default function CTA() {
               Identity for the 21st century
             </Heading>
             <Text color="gray.600" mt="4" fontSize="lg" fontWeight="medium">
-              FixedID is a unique ID number registered on the blockchain that
-              stays with you for life. Prove to sites and dapps that you're a
-              unique human, and earn basic income with FixedCoin.
+              The first blockchain-registered permanent ID. Prove to sites and
+              dapps that you're a unique human, and earn basic income with
+              FixedCoin.
             </Text>
             <Stack
               direction={{ base: 'column', md: 'row' }}
@@ -90,7 +90,7 @@ export default function CTA() {
               zIndex="1"
               h={{ lg: '100%' }}
               objectFit="cover"
-              src="https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=1280&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTYzMDU3OTAzNQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920"
+              src="https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxfDB8MXxhbGx8fHx8fHx8fA&ixlib=rb-1.2.1&q=80&w=1080"
               alt="Plant growing out of coins"
             />
             <Box
