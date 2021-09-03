@@ -22,17 +22,17 @@ The [ProofOfHumanity](https://www.proofofhumanity.id/) signup process is a good 
 
 There are a few modifications that I think would make this process more effective:
 
-- The collateral should be deposited permanently. That way challengers are incentivized to always be scanning the network, instead of only focusing on new submissions. The permanently locked collateral can also be much smaller (~20USD) and still achieve its intended effect.
+- The collateral should be deposited permanently. That way challengers are incentivized to always be scanning the network, instead of only focusing on new submissions. The permanently locked collateral can also be much smaller (~30USD) and still achieve its intended effect.
 - Initially, no vouchers should be required to minimize barriers to entry. Over time the voucher requirements can be raised. When voucher requirements are added they should be weighted according to graph connectedness, to prevent eg. 5 scam accounts all just vouching for each other.
 - The initial signup and posting of collateral can be done with a credit card to make the onboarding much simpler for non-crypto users. (I'll need legal advice on this, but a strong case can be made that since the collateral is never returned, you're just paying for the service of creating/verifying your account instead of buying a token, so a brokerage license/KYC shouldn't be required.)
 
 ## Challenging Fraudulent Users
 
-Again, ProofOfHumanity's process here seems reasonable. As mentioned above, the primary modification I propose is dropping the challenge collateral significantly to ~$20 and locking it perpetually.
+Again, ProofOfHumanity's process here seems reasonable. As mentioned above, the primary modification I propose is dropping the challenge collateral significantly to ~$30 and locking it perpetually.
 
-Since $20 is too little to justify a jury trial, this requires adding an extra "phase 0" arbitration. In the phase 0 arbitration, a challenger challenges a profile, submitting his evidence along with $20 in collateral. The challengee can review the evidence. If they think they're likely to lose (for example, they submitted their proof of personhood in the wrong format, or are indeed a fraudulent account), they can opt to do nothing, lose their account, and forfeit their $20 in collateral.
+Since $30 is too little to justify a jury trial, this requires adding an extra "phase 0" arbitration. In the phase 0 arbitration, a challenger challenges a profile, submitting his evidence along with $30 in collateral. The challengee can review the evidence. If they think they're likely to lose (for example, they submitted their proof of personhood in the wrong format, or are indeed a fraudulent account), they can opt to do nothing, lose their account, and forfeit their $30 in collateral.
 
-If they believe they can win the challenge, they can put up a larger stake of $400, which is enough to justify a jury trial. The challenger then has to either match the $400 deposit and take the challenge to trial, or drop it and forfeit their $20 challenge deposit.
+If they believe they can win the challenge, they can put up a larger stake of $400, which is enough to justify a jury trial. The challenger then has to either match the $400 deposit and take the challenge to trial, or drop it and forfeit their $30 challenge deposit.
 
 Note that this exchange only works if gas fees are fairly low, so this whole contract will likely live in a rollup. 🙃
 
