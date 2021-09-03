@@ -8,8 +8,8 @@ services:
 - name: app-web
   type: web
   env: static
-  buildCommand: yarn rw deploy render web
-  staticPublishPath: ./web/dist
+  buildCommand: cd app && yarn install --frozen-lockfile && yarn rw deploy render web
+  staticPublishPath: ./app/web/dist
   envVars:
   - key: NODE_VERSION
     value: 14

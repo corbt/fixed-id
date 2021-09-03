@@ -1,17 +1,7 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Img,
-  Input,
-  Link,
-  Stack,
-  Text,
-  useColorModeValue as mode,
-} from '@chakra-ui/react'
+import { Box, Button, Heading, Img, Link, Stack, Text } from '@chakra-ui/react'
 import * as React from 'react'
 
-export default function CTA() {
+export default function Hero(props: { openWaitlist: () => void }) {
   return (
     <Box as="section" bg="gray.50" pt="16" pb="24">
       <Box
@@ -37,7 +27,7 @@ export default function CTA() {
               <Text as="span" color="blue.600">
                 FixedID:{' '}
               </Text>
-              Identity for the 21st century
+              Identity for the twenty-first century
             </Heading>
             <Text color="gray.600" mt="4" fontSize="lg" fontWeight="medium">
               The first blockchain-registered permanent ID. Prove to sites and
@@ -46,38 +36,25 @@ export default function CTA() {
             </Text>
             <Stack
               direction={{ base: 'column', md: 'row' }}
-              align={{ md: 'flex-end' }}
+              align={{ md: 'center' }}
               mt="8"
             >
-              <Box flex="1">
-                <Input
-                  id="waitlistEmail"
-                  name="email"
-                  size="lg"
-                  fontSize="md"
-                  bg="white"
-                  _placeholder={{ color: 'gray.400' }}
-                  color="gray.900"
-                  placeholder="Email"
-                  focusBorderColor="blue.200"
-                />
-              </Box>
               <Button
-                type="submit"
                 size="lg"
                 colorScheme="blue"
                 fontSize="md"
                 px="10"
+                onClick={props.openWaitlist}
               >
                 Join the Waitlist
               </Button>
+              <Text pl="6" color="gray.600">
+                Already in the beta?{' '}
+                <Link href="#" textDecoration="underline">
+                  Sign in
+                </Link>
+              </Text>
             </Stack>
-            <Text mt="4" color="gray.600">
-              Already in the beta?{' '}
-              <Link href="#" textDecoration="underline">
-                Sign in
-              </Link>
-            </Text>
           </Box>
           <Box
             pos="relative"

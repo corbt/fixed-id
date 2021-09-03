@@ -91,7 +91,7 @@ export default () => (
         icon={<FcMoneyTransfer />}
       >
         The FixedCoin issuance rate is designed for a long-term inflation rate
-        of 2.3% a year. Economists agree that a small, stable inflation rate is
+        of 2.3% a year. Economists agree that a small, stable inflation rate is{' '}
         <Link
           href="https://www.marketplace.org/2019/09/12/why-is-inflation-necessary/"
           isExternal

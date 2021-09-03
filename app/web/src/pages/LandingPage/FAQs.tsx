@@ -12,6 +12,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Portal,
   Stack,
   Text,
   TextProps,
@@ -31,7 +32,7 @@ const FixedID: React.FC<TextProps> = (props) => (
   </Text>
 )
 
-export default function FAQs() {
+export default function FAQs(props: { openWaitlist: () => void }) {
   return (
     <Box
       as="section"
@@ -73,7 +74,7 @@ export default function FAQs() {
           </Box>
           <Box>
             <Heading as="h2" pb="4">
-              What can I do with a <FixedCoin />?
+              What can I do with <FixedCoin />?
             </Heading>
             FixedCoins are standard{' '}
             <Link
@@ -144,7 +145,10 @@ export default function FAQs() {
                 here
               </Link>
               . The best way to hear when we're ready to launch is by{' '}
-              <Link href="#waitlistEmail">signing up for the waitlist</Link>.
+              <Link onClick={props.openWaitlist}>
+                signing up for the waitlist
+              </Link>
+              .
             </Text>
             <Text pb="4">
               Once you move off the waitlist, it'll be easy to sign up for a{' '}
@@ -189,13 +193,15 @@ export default function FAQs() {
                   <PopoverTrigger>
                     <Link fontWeight="bold">honesty bond</Link>
                   </PopoverTrigger>
-                  <PopoverContent sx={{ textIndent: 0 }}>
-                    <PopoverBody>
-                      If another user believes your profile is a duplicate or
-                      fake, they can challenge it, and if successful redeem the
-                      honesty bond.
-                    </PopoverBody>
-                  </PopoverContent>
+                  <Portal>
+                    <PopoverContent>
+                      <PopoverBody>
+                        If another user believes your profile is a duplicate or
+                        fake, they can challenge it, and if successful redeem
+                        the honesty bond.
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Portal>
                 </Popover>{' '}
                 (currently 0.01ETH, or about $30). This bond remains in the
                 FixedIncome contract.
@@ -204,12 +210,11 @@ export default function FAQs() {
             </OrderedList>
             <Center pt="12">
               <Button
-                as="a"
-                href="#waitlistEmail"
                 size="lg"
                 colorScheme="blue"
                 fontSize="md"
                 px="10"
+                onClick={props.openWaitlist}
               >
                 Join the Waitlist!
               </Button>
