@@ -1,14 +1,28 @@
 import { Box, Button, Heading, Img, Link, Stack, Text } from '@chakra-ui/react'
+import { routes } from '@redwoodjs/router'
 import * as React from 'react'
 
 export default function Hero(props: { openWaitlist: () => void }) {
   return (
-    <Box as="section" bg="gray.50" pt="16" pb="24">
+    <Box as="section" bg="gray.50" pb="24">
       <Box
         maxW={{ base: 'xl', md: '7xl' }}
         mx="auto"
         px={{ base: '6', md: '8' }}
       >
+        <Stack
+          direction="row"
+          spacing="4"
+          color="gray.600"
+          justify="flex-end"
+          pt="8"
+          pb="12"
+        >
+          <Link href={routes.whitepaper()}>Whitepaper</Link>
+          <Link href="https://github.com/corbt/fixed-id" isExternal>
+            Code
+          </Link>
+        </Stack>
         <Stack
           direction={{ base: 'column', lg: 'row' }}
           spacing={{ base: '3rem', lg: '2rem' }}
