@@ -50,7 +50,7 @@ export default () => (
       </Feature>
       <Feature title="Better single-sign-on" icon={<FcMindMap />}>
         You can use the crypto wallet associated with your FixedID to securely
-        sign in to participating apps and websites. More secure than a username
+        sign in to participating sites and dapps. More secure than a username
         and password, and more private than signing in with Google or Facebook.
       </Feature>
       <Feature title="Fully private" icon={<FcPrivacy />}>

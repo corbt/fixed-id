@@ -131,7 +131,7 @@ export default function FAQs(props: { openWaitlist: () => void }) {
             <Text>
               Also, the FixedID contract issues ID numbers sequentially,
               starting with ID 1. So the sooner you sign up, the lower your
-              number will be. And low numbers are cool. 😂
+              number will be. And low numbers are cool. 😎
             </Text>
           </Box>
           <Box>
