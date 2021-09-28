@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "lodash": "^4.17.21",
+    "merkletreejs": "^0.2.24",
+    "zokrates-js": "^1.0.35"
+  }
+}
