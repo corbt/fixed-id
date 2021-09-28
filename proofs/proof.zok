@@ -1,4 +1,3 @@
-// import "hashes/sha256/256bitPadded" as sha256
 import "hashes/sha256/512bitPadded" as sha256
 
 struct MerkleProofStep {
@@ -6,22 +5,20 @@ struct MerkleProofStep {
   u32[8] otherDigest
 }
 
-def main(u32[8] rootDigest, u32[8] leafDigest, MerkleProofStep[2] merkleProof) -> u32[8]:
+def verifyMerkleProof<Depth>(u32[8] rootDigest, u32[8] leafDigest, MerkleProofStep[Depth] merkleProof) -> bool:
   u32[8] currentDigest = leafDigest
 
-  // assert(rootDigest == sha256(leafDigest, merkleProof[0].otherDigest))
+  for u32 i in 0..Depth do
+    MerkleProofStep currentStep = merkleProof[i]
 
-  return sha256(leafDigest, merkleProof[0].otherDigest)
-  // return rootDigest
-  // for u32 i in 0..2 do
-  //   MerkleProofStep currentStep = proofSteps[i]
+    u32[8] lhs = if currentStep.isRightNode then currentStep.otherDigest else currentDigest fi
+    u32[8] rhs = if currentStep.isRightNode then currentDigest else currentStep.otherDigest fi
+    currentDigest = sha256(lhs, rhs)
+  endfor
 
-	//   u32[8] newDigest = sha256([multiplex(currentStep.isRightNode, currentDigest, currentStep.otherDigest)])
+  return rootDigest == currentDigest
 
-  //   currentDigest = newDigest
-  // endfor
+def main(u32[8] rootDigest, u32[8] leafDigest, MerkleProofStep[2] merkleProof):
+  assert(verifyMerkleProof(rootDigest, leafDigest, merkleProof))
 
-
-  // u32[8] cleartext = [0, 0, 0, 0, 0, 0, 0, 0]
-  // // return cleartext
-  // return sha256(left, right)
+  return
