@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const poseidon = require("circomlib/src/poseidon");
 const { toBufferBE, toBigIntBE } = require("bigint-buffer");
+const { PublicKey, PrivateKey } = require("babyjubjub");
 
 // Example inputs
 
@@ -28,9 +29,9 @@ const FIXED_ID = 1318;
 // de-anonymize them (but still cannot impersonate them).
 const PASSWORD = "moloch";
 
-// TODO: real public/private key
-const PRIVATE_KEY = 123;
-const PUBLIC_KEY = 123;
+// Keypair on BabyJubJub to prove ownership. Ideally, the private key would be derived from the user's wallet's private key so they don't have to keep track of another secret. For now, we'll just generate one randomly.
+const PRIV_KEY = PrivateKey.getRandObj().field;
+const PUB_KEY = PublicKey.fromPrivate(new PrivateKey(PRIV_KEY));
 
 // Users can create multiple distinct aliases for each app as long as they all
 // have distinct `AliasId`s. An app can limit users to N aliases by only
@@ -41,10 +42,10 @@ const ALIAS_ID = 0;
 // Conversion and serialization helpers
 const bufferToBigInt = (buffer) => toBigIntBE(buffer);
 const bigIntToBuffer = (bigInt) => toBufferBE(bigInt, 32);
-const bufferToZok32 = (buffer) =>
+const bufferToZok64 = (buffer) =>
   buffer
     .toString("hex")
-    .split(/(.{8})/)
+    .split(/(.{16})/)
     .filter((c) => c.length > 0)
     .map((chunk) => parseInt(chunk, 16).toString());
 const bufferToZokField = (buffer) => "0x" + bufferToBigInt(buffer).toString(16);
@@ -67,7 +68,8 @@ const hashedPassword = poseidon([stringToNum(PASSWORD)]);
 
 // This leaf will live in the Merkle tree of active users maintained by a smart
 // contract. Everything in it is public knowledge.
-const myLeaf = bigIntToBuffer(poseidon([FIXED_ID, PUBLIC_KEY, hashedPassword]));
+const pubKeyCombined = BigInt(PUB_KEY.p.x.n.plus(PUB_KEY.p.y.n).toFixed());
+const myLeaf = bigIntToBuffer(poseidon([FIXED_ID, pubKeyCombined, hashedPassword]));
 
 // Fill out the rest of our Merkle tree with random hashes. In reality, this would be
 // the hashes of all other users' leaves.
@@ -94,9 +96,9 @@ async function main() {
     numToZok(NONCE),
     numToZok(MAX_ALIASES),
     numToZok(appToken),
-    numToZok(PUBLIC_KEY),
+    [PUB_KEY.p.x.n.toFixed(), PUB_KEY.p.y.n.toFixed()],
     numToZok(FIXED_ID),
-    numToZok(PRIVATE_KEY),
+    PRIV_KEY.n.toFixed(),
     numToZok(stringToNum(PASSWORD)),
     numToZok(ALIAS_ID),
     merkleProof,
