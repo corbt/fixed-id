@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bigint-buffer": "^1.1.5",
     "circomlib": "^0.5.4",
     "crypto-js": "^4.1.1",
     "lodash": "^4.17.21",
