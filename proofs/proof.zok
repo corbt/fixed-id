@@ -1,24 +1,24 @@
-import "hashes/sha256/512bitPadded" as sha256
+import "hashes/poseidon/poseidon" as poseidon
 
 struct MerkleProofStep {
   bool isRightNode
-  u32[8] otherDigest
+  field otherDigest
 }
 
-def verifyMerkleProof<Depth>(u32[8] rootDigest, u32[8] leafDigest, MerkleProofStep[Depth] merkleProof) -> bool:
-  u32[8] currentDigest = leafDigest
+def verifyMerkleProof<Depth>(field rootDigest, field leafDigest, MerkleProofStep[Depth] merkleProof) -> bool:
+  field currentDigest = leafDigest
 
   for u32 i in 0..Depth do
     MerkleProofStep currentStep = merkleProof[i]
 
-    u32[8] lhs = if currentStep.isRightNode then currentStep.otherDigest else currentDigest fi
-    u32[8] rhs = if currentStep.isRightNode then currentDigest else currentStep.otherDigest fi
-    currentDigest = sha256(lhs, rhs)
+    field lhs = if currentStep.isRightNode then currentStep.otherDigest else currentDigest fi
+    field rhs = if currentStep.isRightNode then currentDigest else currentStep.otherDigest fi
+    currentDigest = poseidon([lhs, rhs])
   endfor
 
-  return rootDigest == currentDigest
+  assert(currentDigest == rootDigest)
+  return true
 
-def main(u32[8] rootDigest, u32[8] leafDigest, MerkleProofStep[2] merkleProof):
+def main(field rootDigest, field leafDigest, private MerkleProofStep[2] merkleProof):
   assert(verifyMerkleProof(rootDigest, leafDigest, merkleProof))
-
   return
