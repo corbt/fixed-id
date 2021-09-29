@@ -20,11 +20,34 @@ def verifyMerkleProof<Depth>(field rootDigest, field leafDigest, MerkleProofStep
   return true
 
 def main(field rootDigest, field appId, field nonce, field maxAliases, field appToken, field publicKey, private field fixedId, private field privateKey, private field password, private field aliasId, private MerkleProofStep[2] merkleProof):
+  // The user's leaf node is a hash of their fixedId, public key, and password
+  // hash. By hashing the password within the proof itself, we guarantee that
+  // the proof submitter knows the actual password, not just the publicly-known
+  // hash.
   field leafDigest = poseidon([fixedId, publicKey, poseidon([password])])
-
+  
+  // Ensure that the user's leaf does in fact exist in the public Merkle tree of
+  // all active users. This check also ensures that their fixedId, publicKey,
+  // and password are valid, because otherwise they wouldn't be able to generate
+  // a Merkle proof demonstrating their inclusion in the publicly-known tree.
   assert(verifyMerkleProof(rootDigest, leafDigest, merkleProof))
+
+  // Ensure that the appToken is correctly composed. Because all of the elements
+  // of the hash are either controlled by the app or publicly fixed in the
+  // Merkle tree, it's the only way for a user to generate multiple valid
+  // appTokens for the same app except is by incrementing the aliasId, which is
+  // checked separately.
+  assert(appToken == poseidon([fixedId, appId, password, aliasId]))
+
+  // Apps can use the `maxAliases` argument to choose how many valid aliases
+  // each FixedID can create for their app.
+  assert(aliasId < maxAliases)
 
   // Dummy assertions to make the ZoKrates compiler happy
   assert(privateKey == 3)
-  assert(aliasId == 2)
+
+  // Users must demonstrate they know the private key associated with the app's
+  // public key. This is critical to prevent an impostor who steals someone's
+  // `password` from generating valid credentials.
+  
   return
