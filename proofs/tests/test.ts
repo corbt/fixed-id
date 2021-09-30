@@ -1,11 +1,14 @@
-const { MerkleTree } = require("merkletreejs");
-const { initialize } = require("zokrates-js/node");
-const range = require("lodash/range");
-const fs = require("fs");
-const path = require("path");
-const poseidon = require("circomlib/src/poseidon");
-const { toBufferBE, toBigIntBE } = require("bigint-buffer");
-const { PublicKey, PrivateKey } = require("babyjubjub");
+import fakeMerkleProof from "./fakeMerkleProof";
+import { bigIntToBuffer, bufferToBigInt, bufferToZokField, numToZok, stringToNum } from "./helpers";
+import { default as poseidon } from "circomlib/src/poseidon";
+
+import { MerkleTree } from "merkletreejs";
+import { initialize } from "zokrates-js/node";
+import range from "lodash/range";
+import fs from "fs";
+import path from "path";
+import { PublicKey, PrivateKey } from "babyjubjub";
+import crypto from "crypto";
 
 require("console-stamp")(console, { format: ":date(HH:MM:ss.l)" });
 
@@ -46,27 +49,7 @@ const ALIAS_ID = 0;
 // binds the maximum size of the tree to 2 ** MERKLE_TREE_MAX_DEPTH. This
 // parameter needs to be kept in sync with the N in MerkleProofStep[N] on the
 // ZoKrates side.
-const MERKLE_TREE_MAX_DEPTH = 24;
-
-// Conversion and serialization helpers
-const bufferToBigInt = (buffer) => toBigIntBE(buffer);
-const bigIntToBuffer = (bigInt) => toBufferBE(bigInt, 32);
-const bufferToZok64 = (buffer) =>
-  buffer
-    .toString("hex")
-    .split(/(.{16})/)
-    .filter((c) => c.length > 0)
-    .map((chunk) => parseInt(chunk, 16).toString());
-const bufferToZokField = (buffer) => "0x" + bufferToBigInt(buffer).toString(16);
-const numToZok = (num) => "0x" + num.toString(16);
-const stringToNum = (str) => bufferToBigInt(Buffer.from(str));
-
-// Adapt the poseidon hash function to work with `merkletreejs`.
-const treePoseidon = (input) => {
-  const lhs = input.slice(0, input.length / 2);
-  const rhs = input.slice(input.length / 2, input.length);
-  return bigIntToBuffer(poseidon([bufferToBigInt(lhs), bufferToBigInt(rhs)]));
-};
+const MERKLE_TREE_MAX_DEPTH = 33;
 
 // The app token is a persistent ID derived from your FixedID and the app you're
 // signing into. Since it doesn't depend on your public key, it allows for
@@ -78,27 +61,49 @@ const hashedPassword = poseidon([stringToNum(PASSWORD)]);
 // This leaf will live in the Merkle tree of active users maintained by a smart
 // contract. Everything in it is public knowledge.
 const pubKeyCombined = BigInt(PUB_KEY.p.x.n.plus(PUB_KEY.p.y.n).toFixed());
-const myLeaf = bigIntToBuffer(poseidon([FIXED_ID, pubKeyCombined, hashedPassword]));
 
-// Fill out the rest of our Merkle tree with random hashes. In reality, this would be
-// the hashes of all other users' leaves.
-console.log("Generating placeholder leaves");
-const leaves = range(50000).map((x) => bigIntToBuffer(poseidon([x])));
+console.log("Generating the user's leaf node");
+const myLeaf = poseidon([FIXED_ID, pubKeyCombined, hashedPassword]);
 
-// Insert my own leaf into the list of leaves
-leaves[1000] = myLeaf;
-console.log("Generating the tree");
-const tree = new MerkleTree(leaves, treePoseidon);
+const GENERATE_REAL_TREE = false;
+let merkleProof = [];
+let merkleRoot = Buffer.from([0]);
+if (GENERATE_REAL_TREE) {
+  // Fill out the rest of our Merkle tree with random values. In reality, this would be
+  // the hashes of all other users' leaves.
+  console.log("Generating placeholder leaves");
+  const leaves = range(16000000).map(() => crypto.randomBytes(32));
 
-console.log("Generating Merkle proof");
-let merkleProof = tree.getProof(myLeaf).map((step) => ({
-  isRightNode: step.position === "right",
-  otherDigest: bufferToZokField(step.data),
-}));
+  // Insert my own leaf into the list of leaves
+  leaves[1000] = myLeaf;
+  console.log("Generating the tree");
+
+  // Adapt the poseidon hash function to work with `merkletreejs`.
+  const treePoseidon = (input) => {
+    const lhs = input.slice(0, input.length / 2);
+    const rhs = input.slice(input.length / 2, input.length);
+    return bigIntToBuffer(poseidon([bufferToBigInt(lhs), bufferToBigInt(rhs)]));
+  };
+
+  const tree = new MerkleTree(leaves, treePoseidon);
+  merkleRoot = tree.getRoot();
+
+  console.log("Generating Merkle proof");
+  merkleProof = tree.getProof(bigIntToBuffer(myLeaf)).map((step) => ({
+    isRightNode: step.position === "right",
+    otherDigest: bufferToZokField(step.data),
+  }));
+} else {
+  console.log("Generating a fake Merkle proof");
+  const [root, proof] = fakeMerkleProof(myLeaf, 33);
+  merkleRoot = bigIntToBuffer(root);
+  merkleProof = proof.map((step) => ({
+    isRightNode: step.isRightNode,
+    otherDigest: numToZok(step.otherDigest),
+  }));
+}
 if (merkleProof.length > MERKLE_TREE_MAX_DEPTH) {
-  throw `Error: tree is larger than MERKLE_TREE_MAX_DEPTH permits (${
-    tree.getLeaves().length
-  } > 2 ** ${MERKLE_TREE_MAX_DEPTH})`;
+  throw `Error: tree is larger than MERKLE_TREE_MAX_DEPTH permits (${merkleProof.length} > ${MERKLE_TREE_MAX_DEPTH})`;
 } else if (merkleProof.length < MERKLE_TREE_MAX_DEPTH) {
   // Dummy proof steps to pad out the `merkleProof` array to the expected length.
   merkleProof = merkleProof.concat(
@@ -119,7 +124,7 @@ async function main() {
 
   console.log("Computing the witness");
   const { witness, output } = zok.computeWitness(artifacts, [
-    bufferToZokField(tree.getRoot()),
+    bufferToZokField(merkleRoot),
     numToZok(stringToNum(APP_ID)),
     numToZok(NONCE),
     numToZok(MAX_ALIASES),
