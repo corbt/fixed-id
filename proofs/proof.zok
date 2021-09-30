@@ -15,17 +15,29 @@ def verifyMerkleProof<Depth>(field rootDigest, field leafDigest, MerkleProofStep
 
     field lhs = if currentStep.isRightNode then currentDigest else currentStep.otherDigest fi
     field rhs = if currentStep.isRightNode then currentStep.otherDigest else currentDigest fi
-    currentDigest = poseidon([lhs, rhs])
+    // currentDigest = poseidon([lhs, rhs])
+    currentDigest = if currentStep.otherDigest == 0 then currentDigest else poseidon([lhs, rhs]) fi
   endfor
 
   assert(currentDigest == rootDigest)
   return true
 
-def main(field rootDigest, field appId, field nonce, field maxAliases, field appToken, field[2] publicKey, private field fixedId, private field privateKey, private field password, private field aliasId, private MerkleProofStep[2] merkleProof):
-  // The user's leaf node is a hash of their fixedId, public key, and password
-  // hash. By hashing the password within the proof itself, we guarantee that
-  // the proof submitter knows the actual password, not just the publicly-known
-  // hash.
+def main(field rootDigest, \
+         field appId, \
+         field nonce, \
+         field maxAliases, \
+         field appToken, \
+         field[2] publicKey, \
+         private field fixedId, \
+         private field privateKey, \
+         private field password, \
+         private field aliasId, \
+         private MerkleProofStep[24] merkleProof \
+):
+  // The user's leaf node should be a hash of their fixedId, public key, and
+  // password hash. By hashing the password within the proof itself, we
+  // guarantee that the proof submitter knows the actual password, not just the
+  // publicly-known hash.
   field leafDigest = poseidon([fixedId, publicKey[0] + publicKey[1], poseidon([password])])
   
   // Ensure that the user's leaf does in fact exist in the public Merkle tree of

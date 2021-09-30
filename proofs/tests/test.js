@@ -7,6 +7,8 @@ const poseidon = require("circomlib/src/poseidon");
 const { toBufferBE, toBigIntBE } = require("bigint-buffer");
 const { PublicKey, PrivateKey } = require("babyjubjub");
 
+require("console-stamp")(console, { format: ":date(HH:MM:ss.l)" });
+
 // Example inputs
 
 // The ID of the app that we'll be provide a proof to
@@ -38,6 +40,13 @@ const PUB_KEY = PublicKey.fromPrivate(new PrivateKey(PRIV_KEY));
 // permitting proofs that show the `AliasId` is less than N. An ap that wants to
 // enforce one account per human can require AliasId to always be 0.
 const ALIAS_ID = 0;
+
+// The ZoKrates proof doesn't allow for function parameters of unknown length,
+// so we need to tell it the maximum number of steps in the Merkle proof. This
+// binds the maximum size of the tree to 2 ** MERKLE_TREE_MAX_DEPTH. This
+// parameter needs to be kept in sync with the N in MerkleProofStep[N] on the
+// ZoKrates side.
+const MERKLE_TREE_MAX_DEPTH = 24;
 
 // Conversion and serialization helpers
 const bufferToBigInt = (buffer) => toBigIntBE(buffer);
@@ -73,23 +82,42 @@ const myLeaf = bigIntToBuffer(poseidon([FIXED_ID, pubKeyCombined, hashedPassword
 
 // Fill out the rest of our Merkle tree with random hashes. In reality, this would be
 // the hashes of all other users' leaves.
-const leaves = range(4).map((x) => bigIntToBuffer(poseidon([x])));
+console.log("Generating placeholder leaves");
+const leaves = range(50000).map((x) => bigIntToBuffer(poseidon([x])));
 
 // Insert my own leaf into the list of leaves
-leaves[1] = myLeaf;
+leaves[1000] = myLeaf;
+console.log("Generating the tree");
 const tree = new MerkleTree(leaves, treePoseidon);
 
-const merkleProof = tree.getProof(myLeaf).map((step) => ({
+console.log("Generating Merkle proof");
+let merkleProof = tree.getProof(myLeaf).map((step) => ({
   isRightNode: step.position === "right",
   otherDigest: bufferToZokField(step.data),
 }));
+if (merkleProof.length > MERKLE_TREE_MAX_DEPTH) {
+  throw `Error: tree is larger than MERKLE_TREE_MAX_DEPTH permits (${
+    tree.getLeaves().length
+  } > 2 ** ${MERKLE_TREE_MAX_DEPTH})`;
+} else if (merkleProof.length < MERKLE_TREE_MAX_DEPTH) {
+  // Dummy proof steps to pad out the `merkleProof` array to the expected length.
+  merkleProof = merkleProof.concat(
+    Array(MERKLE_TREE_MAX_DEPTH - merkleProof.length).fill({
+      isRightNode: true,
+      otherDigest: "0",
+    })
+  );
+}
 
 async function main() {
   const zok = await initialize();
 
   const source = (await fs.promises.readFile(path.join(__dirname, "../proof.zok"))).toString();
+
+  console.log("Compiling contract");
   const artifacts = zok.compile(source, { config: { allow_unconstrained_variables: true } });
 
+  console.log("Computing the witness");
   const { witness, output } = zok.computeWitness(artifacts, [
     bufferToZokField(tree.getRoot()),
     numToZok(stringToNum(APP_ID)),
@@ -104,8 +132,7 @@ async function main() {
     merkleProof,
   ]);
 
-  console.log(output);
-  console.log("Merkle proof valid");
+  console.log("Valid proof generated");
 }
 
 main().catch(console.error);
