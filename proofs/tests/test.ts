@@ -34,7 +34,9 @@ const FIXED_ID = 1318;
 // de-anonymize them (but still cannot impersonate them).
 const PASSWORD = "moloch";
 
-// Keypair on BabyJubJub to prove ownership. Ideally, the private key would be derived from the user's wallet's private key so they don't have to keep track of another secret. For now, we'll just generate one randomly.
+// Keypair on BabyJubJub to prove ownership. Ideally, the private key would be
+// derived from the user's wallet's private key so they don't have to keep track
+// of another secret. For now, we'll just generate one randomly.
 const PRIV_KEY = PrivateKey.getRandObj().field;
 const PUB_KEY = PublicKey.fromPrivate(new PrivateKey(PRIV_KEY));
 
@@ -117,7 +119,7 @@ if (merkleProof.length > MERKLE_TREE_MAX_DEPTH) {
 async function main() {
   const zok = await initialize();
 
-  const source = (await fs.promises.readFile(path.join(__dirname, "../proof.zok"))).toString();
+  const source = (await fs.promises.readFile(path.join(__dirname, "../../proof.zok"))).toString();
 
   console.log("Compiling contract");
   const artifacts = zok.compile(source, { config: { allow_unconstrained_variables: true } });
