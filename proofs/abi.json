@@ -1,21 +1,80 @@
 {
   "inputs": [
     {
-      "name": "test",
+      "name": "rootDigest",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "appId",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "nonce",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "maxAliases",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "appToken",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "publicKey",
       "public": true,
       "type": "array",
       "components": {
-        "size": 8,
-        "type": "u32"
+        "size": 2,
+        "type": "field"
       }
     },
     {
-      "name": "test2",
-      "public": true,
+      "name": "fixedId",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "privateKey",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "password",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "aliasId",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "merkleProof",
+      "public": false,
       "type": "array",
       "components": {
-        "size": 8,
-        "type": "u32"
+        "size": 33,
+        "type": "struct",
+        "components": {
+          "name": "MerkleProofStep",
+          "generics": [],
+          "members": [
+            {
+              "name": "isRightNode",
+              "type": "bool"
+            },
+            {
+              "name": "otherDigest",
+              "type": "field"
+            }
+          ]
+        }
       }
     }
   ],

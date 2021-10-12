@@ -7,10 +7,11 @@ import { initialize } from "zokrates-js/node";
 import range from "lodash/range";
 import fs from "fs";
 import path from "path";
-import { PublicKey, PrivateKey } from "babyjubjub";
 import crypto from "crypto";
+import { PublicKey, PrivateKey } from "babyjubjub";
+import wasmsnark from "wasmsnark";
 
-require("console-stamp")(console, { format: ":date(HH:MM:ss.l)" });
+// require("console-stamp")(console, { format: ":date(HH:MM:ss.l)" });
 
 // Example inputs
 
@@ -118,11 +119,12 @@ if (merkleProof.length > MERKLE_TREE_MAX_DEPTH) {
 
 async function main() {
   const zok = await initialize();
+  const bn128 = await wasmsnark.buildBn128();
 
   const source = (await fs.promises.readFile(path.join(__dirname, "../../proof.zok"))).toString();
 
   console.log("Compiling contract");
-  const artifacts = zok.compile(source, { config: { allow_unconstrained_variables: true } });
+  const artifacts = zok.compile(source);
 
   console.log("Computing the witness");
   const { witness, output } = zok.computeWitness(artifacts, [
@@ -139,7 +141,18 @@ async function main() {
     merkleProof,
   ]);
 
+  console.log("Generating the keypair");
+  const keypair = zok.setup(artifacts.program);
+
+  console.log("Generating the proof");
+  const proof = await bn128.groth16GenProof(witness, keypair.pk);
+  // const proof = zok.generateProof(artifacts.program, witness, keypair.pk);
   console.log("Valid proof generated");
+
+  console.log("Exporting the verifier");
+  const verifier = zok.exportSolidityVerifier(keypair.vk, "v1");
+
+  console.log("Done!");
 }
 
 main().catch(console.error);

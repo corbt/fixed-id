@@ -33,45 +33,16 @@ def verifyMerkleProof<Depth>(field rootDigest, field leafDigest, MerkleProofStep
   return true
 
 def main(\
-  //  The `rootDigest` is the Merkle root of a set of valid FixedID
-  //  users. It's stored on a public blockchain and a verifier should
-  //  check to make sure the `rootDigest` matches one in the valid set.
   field rootDigest, \
-  // Eeach app that wishes to allow anonymous verifications needs to
-  // select a unique `appId`. This is used as an input for the `appToken`
-  // and allows users to create anonymous accounts on multiple services
-  // without revealing that they all belong to the same backing FixedID.
   field appId, \
-  // The app requesting a login token should provide a nonce and verify
-  // it in the proof to avoid replay attacks.
   field nonce, \
-  // The number of private aliases that the app allows for each user. For
-  // example, `1` means each user can only create one account.
   field maxAliases, \
-  // The app token is a persistent ID derived from your FixedID and the
-  // app you're signing into. Since it doesn't depend on your public key,
-  // it allows for transparent account recovery.
   field appToken, \
-  // The public key associated with the login session authorized by the provided
-  // `appToken`.
   field[2] publicKey, \
-  // The authorizing user's FixedID (https://fixedid.org/).
   private field fixedId, \
-  // The private key associated with the login session authorized by the
-  // provided `appToken`.
   private field privateKey, \
-  // The user's immutable "password". If a user has to change their private key,
-  // they can recover access to FixedID authenticated accounts as long as they
-  // remember their password. An app that learns a user's password may be able
-  // to de-anonymize them (but still cannot impersonate them).
   private field password, \
-  // Users can create multiple distinct aliases for each app as long as they all
-  // have distinct `AliasId`s. An app can limit users to N aliases by only
-  // permitting proofs that show the `AliasId` is less than N. An ap that wants to
-  // enforce one account per human can require AliasId to always be 0.
   private field aliasId, \
-  // The Merkle proof demonstrating that the user has a valid leaf within the
-  // Merkle tree rooted at `rootDigest`.
   private MerkleProofStep[33] merkleProof \
 ):
   // The user's leaf node should be a hash of their fixedId, public key, and
@@ -86,11 +57,10 @@ def main(\
   // a Merkle proof demonstrating their inclusion in the publicly-known tree.
   assert(verifyMerkleProof(rootDigest, leafDigest, merkleProof))
 
-  // Ensure that the appToken is correctly composed. Because all of the elements
-  // of the hash are either controlled by the app or publicly fixed in the
-  // Merkle tree, it's the only way for a user to generate multiple valid
-  // appTokens for the same app except is by incrementing the aliasId, which is
-  // checked separately.
+  // Ensure that the appToken is correctly composed. Because hashing is
+  // deterministic and all of the hash's inputs elements are either controlled
+  // by the app or publicly fixed in the Merkle tree, the a user can only
+  // generate one valid `appToken` per app and `aliasId`.
   assert(appToken == poseidon([fixedId, appId, password, aliasId]))
 
   // Apps can use the `maxAliases` argument to choose how many valid aliases

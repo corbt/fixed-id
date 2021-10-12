@@ -13,6 +13,7 @@
     "merkletreejs": "^0.2.24",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3",
+    "wasmsnark": "^0.0.10",
     "zokrates-js": "^1.0.35"
   }
 }
